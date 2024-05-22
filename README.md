@@ -33,7 +33,7 @@
 
 ## project 
 this project is a branch from https://github.com/xuxueli/xxl-job .
-and version is 2.4.0.
+and version is 2.4.1.
 aim to adapt oracle/gbase xxl-job-admin.
 those change not effect xxl-job-core,.
 below config database platform to switch target platform
