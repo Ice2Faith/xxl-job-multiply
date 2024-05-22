@@ -17,6 +17,7 @@ public class DatabasePlatformConfig implements InitializingBean {
     private Logger log= LoggerFactory.getLogger(DatabasePlatformConfig.class);
 
     private String type;
+    private boolean standalone;
 
 
     @Override
@@ -30,6 +31,14 @@ public class DatabasePlatformConfig implements InitializingBean {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isStandalone() {
+        return standalone;
+    }
+
+    public void setStandalone(boolean standalone) {
+        this.standalone = standalone;
     }
 
     public DatabasePlatformType type(){

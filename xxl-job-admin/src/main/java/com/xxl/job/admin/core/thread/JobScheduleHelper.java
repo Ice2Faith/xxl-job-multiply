@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author xuxueli 2019-05-21
@@ -56,7 +58,11 @@ public class JobScheduleHelper {
                 // pre-read count: treadpool-size * trigger-qps (each trigger cost 50ms, qps = 1000/50 = 20)
                 int preReadCount = (XxlJobAdminConfig.getAdminConfig().getTriggerPoolFastMax() + XxlJobAdminConfig.getAdminConfig().getTriggerPoolSlowMax()) * 20;
 
+                Lock lock=new ReentrantLock();
+
                 while (!scheduleThreadToStop) {
+
+                    boolean isStandalone=DatabasePlatformUtil.getPlatformConfig().isStandalone();
 
                     // Scan Job
                     long start = System.currentTimeMillis();
@@ -65,6 +71,9 @@ public class JobScheduleHelper {
                     Boolean connAutoCommit = null;
                     PreparedStatement preparedStatement = null;
 
+                    if(isStandalone){
+                        lock.lock();
+                    }
                     boolean preReadSuc = true;
                     try {
 
@@ -72,14 +81,16 @@ public class JobScheduleHelper {
                         connAutoCommit = conn.getAutoCommit();
                         conn.setAutoCommit(false);
 
-                        if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE){
-                            preparedStatement = conn.prepareStatement(  "select * from XXL_JOB_LOCK where \"LOCK_NAME\" = 'schedule_lock' for update" );
-                        }else if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.POSTGRE){
-                            preparedStatement = conn.prepareStatement(  "select * from xxl_job_lock where lock_name = 'schedule_lock' for update" );
-                        }else{
-                            preparedStatement = conn.prepareStatement(  "select * from xxl_job_lock where lock_name = 'schedule_lock' for update" );
+                        if(!isStandalone){
+                            if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE){
+                                preparedStatement = conn.prepareStatement(  "select * from XXL_JOB_LOCK where \"LOCK_NAME\" = 'schedule_lock' for update" );
+                            }else if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.POSTGRE){
+                                preparedStatement = conn.prepareStatement(  "select * from xxl_job_lock where lock_name = 'schedule_lock' for update" );
+                            }else{
+                                preparedStatement = conn.prepareStatement(  "select * from xxl_job_lock where lock_name = 'schedule_lock' for update" );
+                            }
+                            preparedStatement.execute();
                         }
-                        preparedStatement.execute();
 
                         // tx start
 
@@ -163,7 +174,9 @@ public class JobScheduleHelper {
                             logger.error(">>>>>>>>>>> xxl-job, JobScheduleHelper#scheduleThread error:{}", e);
                         }
                     } finally {
-
+                        if(isStandalone){
+                            lock.unlock();
+                        }
                         // commit
                         if (conn != null) {
                             try {
