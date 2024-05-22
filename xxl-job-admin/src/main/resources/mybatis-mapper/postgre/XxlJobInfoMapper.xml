@@ -67,7 +67,7 @@
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
@@ -86,12 +86,13 @@
 			</if>
 		</trim>
 		ORDER BY id DESC
-		LIMIT #{offset}, #{pagesize}
+		LIMIT #{pagesize}
+		OFFSET #{offset}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
@@ -161,14 +162,15 @@
 			#{triggerLastTime},
 			#{triggerNextTime}
 		);
-		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()
-		</selectKey>
+			/*SELECT @@IDENTITY AS id*/
+		</selectKey>-->
 	</insert>
 
 	<select id="loadById" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.id = #{id}
 	</select>
 
@@ -208,7 +210,7 @@
 
 	<select id="getJobsByGroup" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.job_group = #{jobGroup}
 	</select>
 
@@ -220,7 +222,7 @@
 
 	<select id="scheduleJobQuery" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.trigger_status = 1
 			and t.trigger_next_time <![CDATA[ <= ]]> #{maxNextTime}
 		ORDER BY id ASC

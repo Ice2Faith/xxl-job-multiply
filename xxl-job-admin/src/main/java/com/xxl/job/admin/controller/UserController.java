@@ -60,6 +60,8 @@ public class UserController {
         if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE){
             int endIndex=(start+1)*length;
             list = xxlJobUserDao.pageList(start, endIndex, username, role);
+        }else if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.POSTGRE){
+            list = xxlJobUserDao.pageList(start, length, username, role);
         }else{
             list = xxlJobUserDao.pageList(start, length, username, role);
         }

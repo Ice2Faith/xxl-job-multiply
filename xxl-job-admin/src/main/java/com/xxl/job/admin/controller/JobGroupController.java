@@ -52,9 +52,13 @@ public class JobGroupController {
 
 		// page query
 		List<XxlJobGroup> list =new ArrayList<>();
-		if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE) {
+		if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE)
+		{
 			int endIndex = (start + 1) * length;
 			 list=xxlJobGroupDao.pageList(start, endIndex, appname, title);
+		}else if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.POSTGRE)
+		{
+			list=xxlJobGroupDao.pageList(start, length, appname, title);
 		}else{
 			list = xxlJobGroupDao.pageList(start, length, appname, title);
 		}

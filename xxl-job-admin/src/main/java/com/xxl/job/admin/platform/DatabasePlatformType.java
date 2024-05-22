@@ -8,6 +8,7 @@ package com.xxl.job.admin.platform;
 public enum DatabasePlatformType {
     MYSQL("mysql"),
     ORACLE("oracle"),
+    POSTGRE("postgre"),
     UNKNOWN("unknown");
 
     private String type;
