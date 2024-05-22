@@ -44,7 +44,7 @@ xxl.job.database.platform.type=mysql
 actually, mysql grammar adapted to gbase, or other, so that, other database could be use mysql platform.
 
 这个项目是 https://github.com/xuxueli/xxl-job 的一个分支。
-版本为 2.4.0。
+版本为 2.4.1。
 目标是适配 oracle/gbase 版本的 xxl-job-admin
 这些改变不影响 xxl-job-core
 下面的配置数据库平台为目标平台
