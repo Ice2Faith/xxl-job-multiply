@@ -13,6 +13,8 @@ import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.*;
+import com.xxl.job.admin.platform.DatabasePlatformType;
+import com.xxl.job.admin.platform.DatabasePlatformUtil;
 import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
@@ -44,14 +46,20 @@ public class XxlJobServiceImpl implements XxlJobService {
 	private XxlJobLogGlueDao xxlJobLogGlueDao;
 	@Resource
 	private XxlJobLogReportDao xxlJobLogReportDao;
-	
+
 	@Override
 	public Map<String, Object> pageList(int start, int length, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
 
 		// page list
-		List<XxlJobInfo> list = xxlJobInfoDao.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
-		int list_count = xxlJobInfoDao.pageListCount(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
-		
+		List<XxlJobInfo> list=new ArrayList<>();
+		if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE){
+			int endIndex=(start+1)*length;
+			list = xxlJobInfoDao.pageList(start, endIndex, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		}else{
+			list = xxlJobInfoDao.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		}
+		int list_count = xxlJobInfoDao.pageListCount(jobGroup, triggerStatus, jobDesc, executorHandler, author);
+
 		// package result
 		Map<String, Object> maps = new HashMap<String, Object>();
 	    maps.put("recordsTotal", list_count);		// 总记录数

@@ -8,6 +8,10 @@
 	</parent>
 	<artifactId>xxl-job-admin</artifactId>
 	<packaging>jar</packaging>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -66,6 +70,23 @@
 			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.nls</groupId>
+            <artifactId>orai18n</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gbase</groupId>
+            <artifactId>gbase-connector-java</artifactId>
+            <version>8.3.81.53</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar</systemPath>
+        </dependency>
+
 		<!-- xxl-job-core -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
@@ -76,19 +97,139 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+        <!-- 指定资源路径，部分项目的xml写在java路径中，需要包含进来 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.json</include>
+                    <include>**/*.ftl</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- 规定java版本等信息，防止每次都要设置jdk版本和编码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgument>-parameters</compilerArgument>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- 打包插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <!-- 指定生成的jar包名 -->
+                    <finalName>${project.artifactId}</finalName>
+                    <archive>
+                        <!-- 去除maven描述信息 -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <!-- 添加classpath,指定classpath前缀，指定启动类 -->
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 指定启动类 -->
+                            <mainClass>com.xxl.job.admin.XxlJobAdminApplication</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <!-- 添加自己的classpath，多个classpath之间直接空格隔开，写成多个Class-Path标签将被后面的覆盖 -->
+                            <Class-Path>. ./resources/ lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar</Class-Path>
+                            <Timestamp>${maven.build.timestamp}</Timestamp>
+                        </manifestEntries>
+                    </archive>
+                    <excludes>
+                        <!-- 打包时排除以下文件，这是实现分离配置文件的第一步 -->
+                        <!-- 这样就得到了一个单纯的jar包，不包含配置信息 -->
+                        <exclude>bin/**</exclude>
+                        <exclude>assembly/**</exclude>
+                        <exclude>*assembly*.xml</exclude>
+
+                        <exclude>templates/**</exclude>
+                        <exclude>static/**</exclude>
+                        <exclude>public/**</exclude>
+
+                        <exclude>i18n/**</exclude>
+                        <exclude>META-INF/**</exclude>
+
+                        <exclude>mapper/**</exclude>
+                        <exclude>*mapper*/**</exclude>
+
+                        <exclude>*mybatis*/**</exclude>
+
+                        <exclude>*spring*.xml</exclude>
+
+                        <exclude>logback/**</exclude>
+                        <exclude>*logback*.xml</exclude>
+
+                        <exclude>*.properties</exclude>
+                        <exclude>*.yml</exclude>
+                        <exclude>*.yaml</exclude>
+                        <exclude>*.conf</exclude>
+                        <exclude>*.j2</exclude>
+                        <exclude>*.config</exclude>
+                        <exclude>*.txt</exclude>
+
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- 打包插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <!-- 使用多个 execution 分别进行执行打包，以重新指定打包文件名 -->
+                <executions>
+                    <execution>
+                        <id>make-all</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}</finalName>
+                            <descriptors>
+                                <descriptor>src/main/resources/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+
+
+                    <execution>
+                        <id>make-upgrade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}</finalName>
+                            <descriptors>
+                                <descriptor>src/main/resources/assembly-upgrade.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<!-- docker -->
 			<plugin>
 				<groupId>com.spotify</groupId>

@@ -7,6 +7,8 @@ import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobRegistryDao;
+import com.xxl.job.admin.platform.DatabasePlatformType;
+import com.xxl.job.admin.platform.DatabasePlatformUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
 import org.springframework.stereotype.Controller;
@@ -49,8 +51,14 @@ public class JobGroupController {
 										String appname, String title) {
 
 		// page query
-		List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
-		int list_count = xxlJobGroupDao.pageListCount(start, length, appname, title);
+		List<XxlJobGroup> list =new ArrayList<>();
+		if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE) {
+			int endIndex = (start + 1) * length;
+			 list=xxlJobGroupDao.pageList(start, endIndex, appname, title);
+		}else{
+			list = xxlJobGroupDao.pageList(start, length, appname, title);
+		}
+		int list_count = xxlJobGroupDao.pageListCount(appname, title);
 
 		// package result
 		Map<String, Object> maps = new HashMap<String, Object>();
@@ -179,7 +187,7 @@ public class JobGroupController {
 	public ReturnT<String> remove(int id){
 
 		// valid
-		int count = xxlJobInfoDao.pageListCount(0, 10, id, -1,  null, null, null);
+		int count = xxlJobInfoDao.pageListCount( id, -1,  null, null, null);
 		if (count > 0) {
 			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_del_limit_0") );
 		}

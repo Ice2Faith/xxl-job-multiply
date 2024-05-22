@@ -31,6 +31,28 @@
     </p>
 </p>
 
+## project 
+this project is a branch from https://github.com/xuxueli/xxl-job .
+and version is 2.4.0.
+aim to adapt oracle/gbase xxl-job-admin.
+those change not effect xxl-job-core,.
+below config database platform to switch target platform
+```shell
+# database platform, mysql|oracle|gbase
+xxl.job.database.platform.type=mysql
+```
+actually, mysql grammar adapted to gbase, or other, so that, other database could be use mysql platform.
+
+这个项目是 https://github.com/xuxueli/xxl-job 的一个分支。
+版本为 2.4.0。
+目标是适配 oracle/gbase 版本的 xxl-job-admin
+这些改变不影响 xxl-job-core
+下面的配置数据库平台为目标平台
+```shell
+# database platform, mysql|oracle|gbase
+xxl.job.database.platform.type=mysql
+```
+实际上，mysql 的语法适用于 gbase ，或者其他兼容的数据库，所以其他数据库也可以使用 mysql 平台
 
 ## Introduction
 XXL-JOB is a distributed task scheduling framework. 
