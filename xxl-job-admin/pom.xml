@@ -87,19 +87,35 @@
             <systemPath>${pom.basedir}/lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar</systemPath>
         </dependency>
 
-		<!-- xxl-job-core -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.43.0.0</version>
+        </dependency>
+
+
+        <!-- xxl-job-core -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-job-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 
-        <dependency>
-               <groupId>org.postgresql</groupId>
-               <artifactId>postgresql</artifactId>
-               <version>42.6.0</version>
-        </dependency>
-	</dependencies>
+
+
+    </dependencies>
 
 	<build>
         <!-- 指定资源路径，部分项目的xml写在java路径中，需要包含进来 -->
