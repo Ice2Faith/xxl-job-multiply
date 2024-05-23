@@ -54,6 +54,27 @@ xxl.job.database.platform.type=mysql
 ```
 实际上，mysql 的语法适用于 gbase ，或者其他兼容的数据库，所以其他数据库也可以使用 mysql 平台
 
+## features
+- support database type list
+    - mysql(official)
+    - oracle
+    - postgre
+    - gbase
+    - h2(developing)
+    - sqlite3(developing)
+- support auto run init sql
+    - finish(wait publish release)
+
+- 支持的数据库库类型
+  - mysql(官方)
+  - oracle
+  - postgre
+  - gbase
+  - h2(开发中)
+  - sqlite3(开发中)
+- 支持自动运行初始化脚本
+    - 已完成(待发布)
+
 ## Introduction
 XXL-JOB is a distributed task scheduling framework. 
 It's core design goal is to develop quickly and learn simple, lightweight, and easy to expand. 
