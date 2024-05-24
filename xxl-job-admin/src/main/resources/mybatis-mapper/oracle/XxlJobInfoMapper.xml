@@ -65,15 +65,9 @@
 		t."TRIGGER_NEXT_TIME"
     </sql>
 
-    <select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
-        SELECT *
-        FROM (SELECT TMP.*, ROWNUM ROW_ID
-        FROM (
-
-        SELECT
-        <include refid="Base_Column_List"/>
+    <sql id="sqlPageListBody">
         FROM XXL_JOB_INFO t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
+        <where>
             <if test="jobGroup gt 0">
                 AND t."JOB_GROUP" = #{jobGroup,jdbcType=NUMERIC}
             </if>
@@ -89,7 +83,17 @@
             <if test="author != null and author != ''">
                 AND t."AUTHOR" like CONCAT(CONCAT('%', #{author,jdbcType=VARCHAR}), '%')
             </if>
-        </trim>
+        </where>
+    </sql>
+
+    <select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
+        SELECT *
+        FROM (SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+
+        SELECT
+        <include refid="Base_Column_List"/>
+        <include refid="sqlPageListBody"></include>
         ORDER BY "ID" DESC
 
 
@@ -101,24 +105,7 @@
 
     <select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
         SELECT count(1)
-        FROM XXL_JOB_INFO t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="jobGroup gt 0">
-                AND t."JOB_GROUP" = #{jobGroup,jdbcType=NUMERIC}
-            </if>
-            <if test="triggerStatus gte 0">
-                AND t."TRIGGER_STATUS" = #{triggerStatus,jdbcType=NUMERIC}
-            </if>
-            <if test="jobDesc != null and jobDesc != ''">
-                AND t."JOB_DESC" like CONCAT(CONCAT('%', #{jobDesc,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="executorHandler != null and executorHandler != ''">
-                AND t."EXECUTOR_HANDLER" like CONCAT(CONCAT('%', #{executorHandler,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="author != null and author != ''">
-                AND t."AUTHOR" like CONCAT(CONCAT('%', #{author,jdbcType=VARCHAR}), '%')
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
     </select>
 
     <insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobInfo">

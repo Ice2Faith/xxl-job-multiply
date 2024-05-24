@@ -60,17 +60,21 @@
 		WHERE t.id = #{id}
 	</select>
 
-	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobGroup">
-		SELECT <include refid="Base_Column_List" />
+	<sql id="sqlPageListBody">
 		FROM xxl_job_group t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+		<where>
 			<if test="appname != null and appname != ''">
 				AND t.app_name like CONCAT(CONCAT('%', #{appname}), '%')
 			</if>
 			<if test="title != null and title != ''">
 				AND t.title like CONCAT(CONCAT('%', #{title}), '%')
 			</if>
-		</trim>
+		</where>
+	</sql>
+
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobGroup">
+		SELECT <include refid="Base_Column_List" />
+		<include refid="sqlPageListBody"></include>
 		ORDER BY t.app_name, t.title, t.id ASC
 		LIMIT #{pagesize}
 		OFFSET #{offset}
@@ -78,15 +82,7 @@
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM xxl_job_group t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="appname != null and appname != ''">
-				AND t.app_name like CONCAT(CONCAT('%', #{appname}), '%')
-			</if>
-			<if test="title != null and title != ''">
-				AND t.title like CONCAT(CONCAT('%', #{title}), '%')
-			</if>
-		</trim>
+		<include refid="sqlPageListBody"></include>
 	</select>
 
 </mapper>

@@ -19,6 +19,18 @@
 		t."PERMISSION"
     </sql>
 
+    <sql id="sqlPageListBody">
+        FROM XXL_JOB_USER t
+        <where>
+            <if test="username != null and username != ''">
+                AND t."USERNAME" like CONCAT(CONCAT('%', #{username,jdbcType=VARCHAR}), '%')
+            </if>
+            <if test="role gt -1">
+                AND t."ROLE" = #{role,jdbcType=NUMERIC}
+            </if>
+        </where>
+    </sql>
+
     <select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
         SELECT *
         FROM (SELECT TMP.*, ROWNUM ROW_ID
@@ -26,15 +38,7 @@
 
         SELECT
         <include refid="Base_Column_List"/>
-        FROM XXL_JOB_USER t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="username != null and username != ''">
-                AND t."USERNAME" like CONCAT(CONCAT('%', #{username,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="role gt -1">
-                AND t."ROLE" = #{role,jdbcType=NUMERIC}
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
         ORDER BY "USERNAME" ASC
 
         ) TMP
@@ -45,15 +49,7 @@
 
     <select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
         SELECT count(1)
-        FROM XXL_JOB_USER t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="username != null and username != ''">
-                AND t."USERNAME" like CONCAT(CONCAT('%', #{username,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="role gt -1">
-                AND t."ROLE" = #{role,jdbcType=NUMERIC}
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
     </select>
 
     <select id="loadByUserName" parameterType="java.util.HashMap" resultMap="XxlJobUser">

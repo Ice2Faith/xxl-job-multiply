@@ -67,6 +67,18 @@
         WHERE t."ID" = #{id,jdbcType=NUMERIC}
     </select>
 
+    <sql id="sqlPageListBody">
+        FROM XXL_JOB_GROUP t
+        <where>
+            <if test="appname != null and appname != ''">
+                AND t."APP_NAME" like CONCAT(CONCAT('%', #{appname,jdbcType=VARCHAR}), '%')
+            </if>
+            <if test="title != null and title != ''">
+                AND t."TITLE" like CONCAT(CONCAT('%', #{title,jdbcType=VARCHAR}), '%')
+            </if>
+        </where>
+    </sql>
+
     <select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobGroup">
         SELECT *
         FROM (SELECT TMP.*, ROWNUM ROW_ID
@@ -74,15 +86,7 @@
 
         SELECT
         <include refid="Base_Column_List"/>
-        FROM XXL_JOB_GROUP t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="appname != null and appname != ''">
-                AND t."APP_NAME" like CONCAT(CONCAT('%', #{appname,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="title != null and title != ''">
-                AND t."TITLE" like CONCAT(CONCAT('%', #{title,jdbcType=VARCHAR}), '%')
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
         ORDER BY t."APP_NAME", t."TITLE", t."ID" ASC
 
 
@@ -95,14 +99,7 @@
     <select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
         SELECT count(1)
         FROM XXL_JOB_GROUP t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="appname != null and appname != ''">
-                AND t."APP_NAME" like CONCAT(CONCAT('%', #{appname,jdbcType=VARCHAR}), '%')
-            </if>
-            <if test="title != null and title != ''">
-                AND t."TITLE" like CONCAT(CONCAT('%', #{title,jdbcType=VARCHAR}), '%')
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
     </select>
 
 </mapper>

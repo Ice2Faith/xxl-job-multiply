@@ -44,15 +44,9 @@
 		t."ALARM_STATUS"
     </sql>
 
-    <select id="pageList" resultMap="XxlJobLog">
-        SELECT *
-        FROM (SELECT TMP.*, ROWNUM ROW_ID
-        FROM (
-
-        SELECT
-        <include refid="Base_Column_List"/>
+    <sql id="sqlPageListBody">
         FROM XXL_JOB_LOG t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
+        <where>
             <if test="jobId==0 and jobGroup gt 0">
                 AND t."JOB_GROUP" = #{jobGroup,jdbcType=NUMERIC}
             </if>
@@ -78,7 +72,17 @@
                 AND t."TRIGGER_CODE" = 200
                 AND t."HANDLE_CODE" = 0
             </if>
-        </trim>
+        </where>
+    </sql>
+
+    <select id="pageList" resultMap="XxlJobLog">
+        SELECT *
+        FROM (SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+
+        SELECT
+        <include refid="Base_Column_List"/>
+        <include refid="sqlPageListBody"></include>
         ORDER BY t."TRIGGER_TIME" DESC
 
 
@@ -90,34 +94,7 @@
 
     <select id="pageListCount" resultType="int">
         SELECT count(1)
-        FROM XXL_JOB_LOG t
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="jobId==0 and jobGroup gt 0">
-                AND t."JOB_GROUP" = #{jobGroup,jdbcType=NUMERIC}
-            </if>
-            <if test="jobId gt 0">
-                AND t."JOB_ID" = #{jobId,jdbcType=NUMERIC}
-            </if>
-            <if test="triggerTimeStart != null">
-                AND t."TRIGGER_TIME" &gt;= #{triggerTimeStart,jdbcType=DATE}
-            </if>
-            <if test="triggerTimeEnd != null">
-                AND t."TRIGGER_TIME" &lt;= #{triggerTimeEnd,jdbcType=DATE}
-            </if>
-            <if test="logStatus == 1">
-                AND t."HANDLE_CODE" = 200
-            </if>
-            <if test="logStatus == 2">
-                AND (
-                t."TRIGGER_CODE" NOT IN (0, 200) OR
-                t."HANDLE_CODE" NOT IN (0, 200)
-                )
-            </if>
-            <if test="logStatus == 3">
-                AND t."TRIGGER_CODE" = 200
-                AND t."HANDLE_CODE" = 0
-            </if>
-        </trim>
+        <include refid="sqlPageListBody"></include>
     </select>
 
     <select id="load" parameterType="java.lang.Long" resultMap="XxlJobLog">
@@ -189,11 +166,11 @@
     </select>-->
 
     <select id="findLogReport" resultType="java.util.Map">
-        SELECT COUNT("HANDLE_CODE")                                    "triggerDayCount",
+        SELECT COUNT("HANDLE_CODE")                                    triggerDayCount,
                SUM(CASE
                        WHEN ("TRIGGER_CODE" in (0, 200) and "HANDLE_CODE" = 0) then 1
-                       else 0 end)                                  as "triggerDayCountRunning",
-               SUM(CASE WHEN "HANDLE_CODE" = 200 then 1 else 0 end) as "triggerDayCountSuc"
+                       else 0 end)                                  as triggerDayCountRunning,
+               SUM(CASE WHEN "HANDLE_CODE" = 200 then 1 else 0 end) as triggerDayCountSuc
         FROM XXL_JOB_LOG
         WHERE "TRIGGER_TIME" BETWEEN #{from,jdbcType=DATE} and #{to,jdbcType=DATE}
     </select>

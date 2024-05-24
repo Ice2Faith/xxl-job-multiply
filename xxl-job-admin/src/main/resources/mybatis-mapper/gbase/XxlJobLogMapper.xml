@@ -44,10 +44,9 @@
 		t.alarm_status
 	</sql>
 
-	<select id="pageList" resultMap="XxlJobLog">
-		SELECT <include refid="Base_Column_List" />
+	<sql id="sqlPageListBody">
 		FROM xxl_job_log t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+		<where>
 			<if test="jobId==0 and jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
 			</if>
@@ -65,49 +64,27 @@
 			</if>
 			<if test="logStatus == 2" >
 				AND (
-					t.trigger_code NOT IN (0, 200) OR
-					t.handle_code NOT IN (0, 200)
+				t.trigger_code NOT IN (0, 200) OR
+				t.handle_code NOT IN (0, 200)
 				)
 			</if>
 			<if test="logStatus == 3" >
 				AND t.trigger_code = 200
 				AND t.handle_code = 0
 			</if>
-		</trim>
+		</where>
+	</sql>
+
+	<select id="pageList" resultMap="XxlJobLog">
+		SELECT <include refid="Base_Column_List" />
+		<include refid="sqlPageListBody"></include>
 		ORDER BY t.trigger_time DESC
 		LIMIT #{offset}, #{pagesize}
 	</select>
 
 	<select id="pageListCount" resultType="int">
 		SELECT count(1)
-		FROM xxl_job_log t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobId==0 and jobGroup gt 0">
-				AND t.job_group = #{jobGroup}
-			</if>
-			<if test="jobId gt 0">
-				AND t.job_id = #{jobId}
-			</if>
-			<if test="triggerTimeStart != null">
-				AND t.trigger_time &gt;= #{triggerTimeStart}
-			</if>
-			<if test="triggerTimeEnd != null">
-				AND t.trigger_time &lt;= #{triggerTimeEnd}
-			</if>
-			<if test="logStatus == 1" >
-				AND t.handle_code = 200
-			</if>
-			<if test="logStatus == 2" >
-				AND (
-					t.trigger_code NOT IN (0, 200) OR
-					t.handle_code NOT IN (0, 200)
-				)
-			</if>
-			<if test="logStatus == 3" >
-				AND t.trigger_code = 200
-				AND t.handle_code = 0
-			</if>
-		</trim>
+		<include refid="sqlPageListBody"></include>
 	</select>
 
 	<select id="load" parameterType="java.lang.Long" resultMap="XxlJobLog">
