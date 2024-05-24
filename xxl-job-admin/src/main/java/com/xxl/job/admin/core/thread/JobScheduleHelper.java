@@ -97,7 +97,7 @@ public class JobScheduleHelper {
                         // 1、pre read
                         long nowTime = System.currentTimeMillis();
                         List<XxlJobInfo> scheduleList = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
-                        if (scheduleList!=null && scheduleList.size()>0) {
+                        if (scheduleList!=null && !scheduleList.isEmpty()) {
                             // 2、push time-ring
                             for (XxlJobInfo jobInfo: scheduleList) {
 
@@ -267,7 +267,7 @@ public class JobScheduleHelper {
 
                         // ring trigger
                         logger.debug(">>>>>>>>>>> xxl-job, time-ring beat : " + nowSecond + " = " + Arrays.asList(ringItemData) );
-                        if (ringItemData.size() > 0) {
+                        if (!ringItemData.isEmpty()) {
                             // do trigger
                             for (int jobId: ringItemData) {
                                 // do trigger
@@ -340,7 +340,7 @@ public class JobScheduleHelper {
         if (!ringData.isEmpty()) {
             for (int second : ringData.keySet()) {
                 List<Integer> tmpData = ringData.get(second);
-                if (tmpData!=null && tmpData.size()>0) {
+                if (tmpData!=null && !tmpData.isEmpty()) {
                     hasRingData = true;
                     break;
                 }

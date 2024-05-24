@@ -161,7 +161,7 @@
 			#{triggerStatus},
 			#{triggerLastTime},
 			#{triggerNextTime}
-		);
+		)
 		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()
 			/*SELECT @@IDENTITY AS id*/
@@ -224,7 +224,7 @@
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_info t
 		WHERE t.trigger_status = 1
-			and t.trigger_next_time <![CDATA[ <= ]]> #{maxNextTime}
+			and t.trigger_next_time &lt;= #{maxNextTime}
 		ORDER BY id ASC
 		LIMIT #{pagesize}
 	</select>

@@ -69,7 +69,7 @@ public class JobLogReportHelper {
                             xxlJobLogReport.setFailCount(0);
 
                             Map<String, Object> triggerCountMap = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findLogReport(todayFrom, todayTo);
-                            if (triggerCountMap!=null && triggerCountMap.size()>0) {
+                            if (triggerCountMap!=null && !triggerCountMap.isEmpty()) {
                                 int triggerDayCount = triggerCountMap.containsKey("triggerDayCount")?Integer.valueOf(String.valueOf(triggerCountMap.get("triggerDayCount"))):0;
                                 int triggerDayCountRunning = triggerCountMap.containsKey("triggerDayCountRunning")?Integer.valueOf(String.valueOf(triggerCountMap.get("triggerDayCountRunning"))):0;
                                 int triggerDayCountSuc = triggerCountMap.containsKey("triggerDayCountSuc")?Integer.valueOf(String.valueOf(triggerCountMap.get("triggerDayCountSuc"))):0;
@@ -110,10 +110,10 @@ public class JobLogReportHelper {
                         List<Long> logIds = null;
                         do {
                             logIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findClearLogIds(0, 0, clearBeforeTime, 0, 1000);
-                            if (logIds!=null && logIds.size()>0) {
+                            if (logIds!=null && !logIds.isEmpty()) {
                                 XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().clearLog(logIds);
                             }
-                        } while (logIds!=null && logIds.size()>0);
+                        } while (logIds!=null && !logIds.isEmpty());
 
                         // update clean time
                         lastCleanLogTime = System.currentTimeMillis();

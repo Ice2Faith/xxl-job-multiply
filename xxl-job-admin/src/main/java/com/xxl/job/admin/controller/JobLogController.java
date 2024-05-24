@@ -56,7 +56,7 @@ public class JobLogController {
 
 		// filter group
 		List<XxlJobGroup> jobGroupList = JobInfoController.filterJobGroupByRole(request, jobGroupList_all);
-		if (jobGroupList==null || jobGroupList.size()==0) {
+		if (jobGroupList==null || jobGroupList.isEmpty()) {
 			throw new XxlJobException(I18nUtil.getString("jobgroup_empty"));
 		}
 
@@ -98,7 +98,7 @@ public class JobLogController {
 		// parse param
 		Date triggerTimeStart = null;
 		Date triggerTimeEnd = null;
-		if (filterTime!=null && filterTime.trim().length()>0) {
+		if (StringUtils.hasText(filterTime)) {
 			String[] temp = filterTime.split(" - ");
 			if (temp.length == 2) {
 				triggerTimeStart = DateUtil.parseDateTime(temp[0]);
@@ -242,10 +242,10 @@ public class JobLogController {
 		List<Long> logIds = null;
 		do {
 			logIds = xxlJobLogDao.findClearLogIds(jobGroup, jobId, clearBeforeTime, clearBeforeNum, 1000);
-			if (logIds!=null && logIds.size()>0) {
+			if (logIds!=null && !logIds.isEmpty()) {
 				xxlJobLogDao.clearLog(logIds);
 			}
-		} while (logIds!=null && logIds.size()>0);
+		} while (logIds!=null && !logIds.isEmpty());
 
 		return ReturnT.SUCCESS;
 	}

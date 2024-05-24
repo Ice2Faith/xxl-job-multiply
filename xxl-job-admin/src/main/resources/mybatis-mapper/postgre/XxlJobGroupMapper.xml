@@ -36,7 +36,7 @@
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_group ( app_name, title, address_type, address_list, update_time)
-		values ( #{appname}, #{title}, #{addressType}, #{addressList}, #{updateTime} );
+		values ( #{appname}, #{title}, #{addressType}, #{addressList}, #{updateTime} )
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" >

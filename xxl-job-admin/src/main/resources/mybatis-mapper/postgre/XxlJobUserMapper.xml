@@ -65,7 +65,7 @@
 			#{password},
 			#{role},
 			#{permission}
-		);
+		)
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobUser" >
