@@ -1,5 +1,7 @@
 package com.xxl.job.admin.controller;
 
+import com.antherd.smcrypto.sm2.Keypair;
+import com.antherd.smcrypto.sm2.Sm2;
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobUser;
@@ -8,6 +10,7 @@ import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.admin.platform.DatabasePlatformType;
 import com.xxl.job.admin.platform.DatabasePlatformUtil;
+import com.xxl.job.admin.security.SecurityContext;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.stereotype.Controller;
@@ -87,6 +90,16 @@ public class UserController {
     @ResponseBody
     @PermissionLimit(adminuser = true)
     public ReturnT<String> add(XxlJobUser xxlJobUser) {
+        // valid password
+        if (!StringUtils.hasText(xxlJobUser.getPassword())) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_please_input")+I18nUtil.getString("user_password") );
+        }
+
+        Keypair keypair = SecurityContext.getInstance().findKeypair(xxlJobUser.getSign());
+        if(keypair==null){
+            return new ReturnT<String>(500, I18nUtil.getString("system_fail"));
+        }
+        xxlJobUser.setPassword(Sm2.doDecrypt(xxlJobUser.getPassword(),keypair.getPrivateKey()));
 
         // valid username
         if (!StringUtils.hasText(xxlJobUser.getUsername())) {
@@ -96,10 +109,7 @@ public class UserController {
         if (!(xxlJobUser.getUsername().length()>=4 && xxlJobUser.getUsername().length()<=20)) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
-        // valid password
-        if (!StringUtils.hasText(xxlJobUser.getPassword())) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_please_input")+I18nUtil.getString("user_password") );
-        }
+
         xxlJobUser.setPassword(xxlJobUser.getPassword().trim());
         if (!(xxlJobUser.getPassword().length()>=4 && xxlJobUser.getPassword().length()<=20)) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
@@ -131,6 +141,12 @@ public class UserController {
 
         // valid password
         if (StringUtils.hasText(xxlJobUser.getPassword())) {
+            Keypair keypair = SecurityContext.getInstance().findKeypair(xxlJobUser.getSign());
+            if(keypair==null){
+                return new ReturnT<String>(500, I18nUtil.getString("system_fail"));
+            }
+            xxlJobUser.setPassword(Sm2.doDecrypt(xxlJobUser.getPassword(),keypair.getPrivateKey()));
+
             xxlJobUser.setPassword(xxlJobUser.getPassword().trim());
             if (!(xxlJobUser.getPassword().length()>=4 && xxlJobUser.getPassword().length()<=20)) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
@@ -163,12 +179,19 @@ public class UserController {
 
     @RequestMapping("/updatePwd")
     @ResponseBody
-    public ReturnT<String> updatePwd(HttpServletRequest request, String password){
+    public ReturnT<String> updatePwd(HttpServletRequest request, String password,String sign){
 
         // valid password
         if (!StringUtils.hasText(password)){
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码不可为空");
         }
+
+        Keypair keypair = SecurityContext.getInstance().findKeypair(sign);
+        if(keypair==null){
+            return new ReturnT<String>(500, I18nUtil.getString("system_fail"));
+        }
+        password= Sm2.doDecrypt(password,keypair.getPrivateKey());
+
         password = password.trim();
         if (!(password.length()>=4 && password.length()<=20)) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );

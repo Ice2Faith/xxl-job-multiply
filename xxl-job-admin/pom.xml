@@ -114,7 +114,11 @@
 		</dependency>
 
 
-
+        <dependency>
+            <groupId>com.antherd</groupId>
+            <artifactId>sm-crypto</artifactId>
+            <version>0.3.2</version>
+        </dependency>
     </dependencies>
 
 	<build>

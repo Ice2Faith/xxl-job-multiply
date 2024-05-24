@@ -120,31 +120,53 @@ $(function(){
         errorPlacement : function(error, element) {
             element.parent('div').append(error);
         },
-        submitHandler : function(form) {
-            $.post(base_url + "/user/updatePwd",  $("#updatePwdModal .form").serialize(), function(data, status) {
-                if (data.code == 200) {
-                    $('#updatePwdModal').modal('hide');
+        submitHandler : function(form) {debugger
+            let spkParam=new URLSearchParams()
+            spkParam.set('ts',''+new Date().getTime())
+            spkParam.set('sign',Sm3.sm3(spkParam.get('ts')))
+            $.post(base_url + "/spk",spkParam.toString() , function(data, status) {
+                if (data.code == "200") {
+                    let publicKey = data.content
+                    let sign = Sm3.sm3(publicKey)
 
-                    layer.msg( I18n.change_pwd_suc_to_logout );
-                    setTimeout(function(){
-                        $.post(base_url + "/logout", function(data, status) {
-                            if (data.code == 200) {
-                                window.location.href = base_url + "/";
-                            } else {
-                                layer.open({
-                                    icon: '2',
-                                    content: (data.msg|| I18n.logout_fail)
+                    let param=$("#updatePwdModal .form").serialize()
+                    let searchParams=new URLSearchParams(param)
+                    let password=searchParams.get("password")
+                    password=Sm2.doEncrypt(password,publicKey,1)
+                    searchParams.set('password',password)
+                    searchParams.set('sign',sign)
+                    param=searchParams.toString()
+                    $.post(base_url + "/user/updatePwd",param , function (data, status) {
+                        if (data.code == 200) {
+                            $('#updatePwdModal').modal('hide');
+
+                            layer.msg(I18n.change_pwd_suc_to_logout);
+                            setTimeout(function () {
+                                $.post(base_url + "/logout", function (data, status) {
+                                    if (data.code == 200) {
+                                        window.location.href = base_url + "/";
+                                    } else {
+                                        layer.open({
+                                            icon: '2',
+                                            content: (data.msg || I18n.logout_fail)
+                                        });
+                                    }
                                 });
-                            }
-                        });
-                    }, 500);
+                            }, 500);
+                        } else {
+                            layer.open({
+                                icon: '2',
+                                content: (data.msg || I18n.change_pwd + I18n.system_fail)
+                            });
+                        }
+                    });
                 } else {
                     layer.open({
                         icon: '2',
-                        content: (data.msg|| I18n.change_pwd + I18n.system_fail )
+                        content: (data.msg || I18n.change_pwd + I18n.system_fail)
                     });
                 }
-            });
+            })
         }
     });
     $("#updatePwdModal").on('hide.bs.modal', function () {
@@ -152,5 +174,5 @@ $(function(){
         updatePwdModalValidate.resetForm();
         $("#updatePwdModal .form .form-group").removeClass("has-error");
     });
-	
+
 });
