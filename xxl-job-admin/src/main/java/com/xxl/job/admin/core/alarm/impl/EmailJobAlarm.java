@@ -67,7 +67,7 @@ public class EmailJobAlarm implements JobAlarm, EnvironmentAware {
 
             // alarmContent
             String alarmContent = "Alarm Job LogId=" + jobLog.getId();
-            if (!StringUtils.hasLength(hostIdentity)) {
+            if (StringUtils.hasLength(hostIdentity)) {
                 alarmContent += "<br>Host Identity = " + hostIdentity;
             }
             Date triggerTime = jobLog.getTriggerTime();
