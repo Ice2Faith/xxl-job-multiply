@@ -1,10 +1,14 @@
 package com.xxl.job.admin.service;
 
+import com.antherd.smcrypto.sm2.Keypair;
+import com.antherd.smcrypto.sm2.Sm2;
 import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.security.ConcurrentLruCache;
 import com.xxl.job.admin.core.util.CookieUtil;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.core.util.JacksonUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
+import com.xxl.job.admin.security.SecurityContext;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
@@ -13,7 +17,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigInteger;
+import java.io.*;
 
 /**
  * @author xuxueli 2019-05-04 22:13:264
@@ -23,19 +27,39 @@ public class LoginService {
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_JOB_LOGIN_IDENTITY";
 
+    public static final String KEY_PAIR_PATH=SecurityContext.STORE_PATH+"/token.pk";
+
+    private final Keypair keypair;
+    {
+        Keypair pair = SecurityContext.loadStoreKeypair(KEY_PAIR_PATH, null);
+        if(pair==null){
+            pair=Sm2.generateKeyPairHex();
+        }
+        SecurityContext.saveStoreKeypair(KEY_PAIR_PATH,pair);
+        keypair = pair;
+    }
+
+    private ConcurrentLruCache<String, String> cacheParseToken=new ConcurrentLruCache<>(1024, tokenHex->{
+        String tokenJson = Sm2.doDecrypt(tokenHex, keypair.getPrivateKey());
+        return tokenJson;
+    });
+
     @Resource
     private XxlJobUserDao xxlJobUserDao;
 
 
     private String makeToken(XxlJobUser xxlJobUser){
+        xxlJobUser.setPassword(null);
         String tokenJson = JacksonUtil.writeValueAsString(xxlJobUser);
-        String tokenHex = new BigInteger(tokenJson.getBytes()).toString(16);
+        String tokenHex = Sm2.doEncrypt(tokenJson, keypair.getPublicKey());
         return tokenHex;
     }
+
+
     private XxlJobUser parseToken(String tokenHex){
         XxlJobUser xxlJobUser = null;
         if (tokenHex != null) {
-            String tokenJson = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
+            String tokenJson = cacheParseToken.get(tokenHex);
             xxlJobUser = JacksonUtil.readValue(tokenJson, XxlJobUser.class);
         }
         return xxlJobUser;
@@ -95,9 +119,8 @@ public class LoginService {
             if (cookieUser != null) {
                 XxlJobUser dbUser = xxlJobUserDao.loadByUserName(cookieUser.getUsername());
                 if (dbUser != null) {
-                    if (cookieUser.getPassword().equals(dbUser.getPassword())) {
-                        return dbUser;
-                    }
+                    dbUser.setPassword(null);
+                    return dbUser;
                 }
             }
         }

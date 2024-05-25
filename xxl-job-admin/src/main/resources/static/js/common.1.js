@@ -120,14 +120,15 @@ $(function(){
         errorPlacement : function(error, element) {
             element.parent('div').append(error);
         },
-        submitHandler : function(form) {debugger
+        submitHandler : function(form) {
             let spkParam=new URLSearchParams()
-            spkParam.set('ts',''+new Date().getTime())
-            spkParam.set('sign',Sm3.sm3(spkParam.get('ts')))
+            let cpk=Sm2.generateKeyPairHex()
+            spkParam.set('pk',cpk.publicKey)
+            spkParam.set('sign',Sm3.sm3(spkParam.get('pk')))
             $.post(base_url + "/spk",spkParam.toString() , function(data, status) {
                 if (data.code == "200") {
-                    let publicKey = data.content
-                    let sign = Sm3.sm3(publicKey)
+                    let publicKey=Sm2.doDecrypt(data.content,cpk.privateKey,1)
+                    let sign=Sm3.sm3(publicKey)
 
                     let param=$("#updatePwdModal .form").serialize()
                     let searchParams=new URLSearchParams(param)

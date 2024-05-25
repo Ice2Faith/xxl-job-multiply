@@ -72,16 +72,18 @@ public class IndexController {
 	@ResponseBody
 	@PermissionLimit(limit=false)
 	public ReturnT<String> getServerPublicKey(HttpServletRequest request, HttpServletResponse response,
-											  String ts,
+											  String pk,
 											  String sign){
-		if(!StringUtils.hasLength(ts) || !StringUtils.hasLength(sign)){
+		if(!StringUtils.hasLength(pk) || !StringUtils.hasLength(sign)){
 			return new ReturnT<String>(500, I18nUtil.getString("system_fail"));
 		}
-		if(!Sm3.sm3(ts).equals(sign)){
+		if(!Sm3.sm3(pk).equals(sign)){
 			return new ReturnT<String>(500, I18nUtil.getString("system_fail"));
 		}
 		Keypair keypair = SecurityContext.getInstance().currentKeypair();
-		return new ReturnT<>(keypair.getPublicKey());
+		String publicKey = keypair.getPublicKey();
+		String ret = Sm2.doEncrypt(publicKey, pk);
+		return new ReturnT<>(ret);
 	}
 
 	@RequestMapping(value="login", method=RequestMethod.POST)
