@@ -68,6 +68,14 @@ xxl.job.database.platform.type=mysql
   - cookie token encrypt by sm2
   - sm2 support by com.antherd/sm-crypto-0.3.0
   - because of it support java and js environment
+  - password database store encode by BCryptPasswordEncoder instead of MD5
+    - this change was not adapt official
+    - will cause that already exists user cannot login
+    - so that, suggest new project to use it
+    - but you can direct modify database table to cover password
+    - sql is : update table xxl_job_user set password='$2a$10$rElzP.wCmjyjsVIIqoP4fe8u1qH3otIxiG4UhYs9A3Ivsrm1LrpOu' where 1=1;
+    - this update will set all user password to : 123456
+    - and next, to change password in web page
 - api invoke
   - support use api invoke admin by http header name "token"
   - got token value by /login response header "token"
@@ -96,6 +104,14 @@ xxl.job.database.platform.type=mysql
   - Cookie的token使用SM2加密
   - SM2 由com.antherd/sm-crypto-0.3.0提供
   - 因为他支持java和js环境
+  - 数据库保存的密码使用BCryptPasswordEncoder代替MD5
+    - 这个改变不兼容官方
+    - 将导致已经存在的用户无法登录
+    - 所以，建议新项目使用
+    - 但是，你也可以直接修改数据库表覆盖密码
+    - SQL是：update table xxl_job_user set password='$2a$10$rElzP.wCmjyjsVIIqoP4fe8u1qH3otIxiG4UhYs9A3Ivsrm1LrpOu' where 1=1;
+    - 这个更新将会设置所有用户的密码为：123456
+    - 然后，去网页中更新密码
 - api 调用
   - 支持调用admin的接口，通过在http请求头中添加 "token"
   - token 在 /login 接口响应头 "token" 中
