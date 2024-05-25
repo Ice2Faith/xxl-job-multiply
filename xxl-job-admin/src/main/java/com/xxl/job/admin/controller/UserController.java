@@ -114,8 +114,8 @@ public class UserController {
         if (!(xxlJobUser.getPassword().length()>=4 && xxlJobUser.getPassword().length()<=20)) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
-        // md5 password
-        xxlJobUser.setPassword(DigestUtils.md5DigestAsHex(xxlJobUser.getPassword().getBytes()));
+        // hash password
+        xxlJobUser.setPassword(SecurityContext.getInstance().encodePassword(xxlJobUser.getPassword()));
 
         // check repeat
         XxlJobUser existUser = xxlJobUserDao.loadByUserName(xxlJobUser.getUsername());
@@ -151,8 +151,8 @@ public class UserController {
             if (!(xxlJobUser.getPassword().length()>=4 && xxlJobUser.getPassword().length()<=20)) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
-            // md5 password
-            xxlJobUser.setPassword(DigestUtils.md5DigestAsHex(xxlJobUser.getPassword().getBytes()));
+            // hash password
+            xxlJobUser.setPassword(SecurityContext.getInstance().encodePassword(xxlJobUser.getPassword()));
         } else {
             xxlJobUser.setPassword(null);
         }
@@ -197,15 +197,15 @@ public class UserController {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
-        // md5 password
-        String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+        // hash password
+        String hashPassword = SecurityContext.getInstance().encodePassword(password);
 
         // update pwd
         XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);
 
         // do write
         XxlJobUser existUser = xxlJobUserDao.loadByUserName(loginUser.getUsername());
-        existUser.setPassword(md5Password);
+        existUser.setPassword(hashPassword);
         xxlJobUserDao.update(existUser);
 
         return ReturnT.SUCCESS;

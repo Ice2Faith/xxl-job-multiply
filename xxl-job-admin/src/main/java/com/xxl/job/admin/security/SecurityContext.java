@@ -5,6 +5,8 @@ import com.antherd.smcrypto.sm2.Sm2;
 import com.antherd.smcrypto.sm3.Sm3;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -23,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class SecurityContext implements InitializingBean  {
     public static final String STORE_PATH="../xxl-job";
     private static SecurityContext instance;
+
+    private PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
 
     public static final String LAST_KEY_PATH=SecurityContext.STORE_PATH+"/last.pk";
     private volatile Keypair lastKeyPair;
@@ -60,6 +64,14 @@ public class SecurityContext implements InitializingBean  {
 
     public static SecurityContext getInstance(){
         return instance;
+    }
+
+    public String encodePassword(String password){
+        return passwordEncoder.encode(password);
+    }
+
+    public boolean matchPassword(String password,String encoded){
+        return passwordEncoder.matches(password,encoded);
     }
 
     public synchronized Keypair refreshKeypair(){

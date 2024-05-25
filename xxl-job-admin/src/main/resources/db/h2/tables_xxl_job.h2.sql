@@ -183,7 +183,7 @@ CREATE TABLE xxl_job_user
 (
     id         bigint  auto_increment   NOT NULL ,
     username   varchar(50) NOT NULL ,
-    password   varchar(50) NOT NULL ,
+    password   varchar(300) NOT NULL ,
     role       int4  NOT NULL ,
     permission varchar(255)  ,
     PRIMARY KEY (id)
@@ -223,6 +223,6 @@ VALUES (1, 1, '测试任务1', '2018-11-03 22:21:31', '2018-11-03 22:21:31', 'XX
         'DO_NOTHING', 'FIRST', 'demoJobHandler', '', 'SERIAL_EXECUTION', 0, 0, 'BEAN', '', 'GLUE代码初始化',
         '2018-11-03 22:21:31', '');
 INSERT INTO xxl_job_user(id, username, password, role, permission)
-VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, NULL);
+VALUES (1, 'admin', '$2a$10$rElzP.wCmjyjsVIIqoP4fe8u1qH3otIxiG4UhYs9A3Ivsrm1LrpOu', 1, NULL);
 INSERT INTO xxl_job_lock (lock_name)
 VALUES ('schedule_lock');
