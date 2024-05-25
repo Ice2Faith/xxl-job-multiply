@@ -89,6 +89,7 @@
                 <include>i18n/**</include>
                 <include>META-INF/**</include>
 
+                <include>db/**</include>
                 <include>mapper/**</include>
                 <include>*mapper*/**</include>
 

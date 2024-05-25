@@ -196,6 +196,7 @@
                         <exclude>i18n/**</exclude>
                         <exclude>META-INF/**</exclude>
 
+                        <exclude>db/**</exclude>
                         <exclude>mapper/**</exclude>
                         <exclude>*mapper*/**</exclude>
 
