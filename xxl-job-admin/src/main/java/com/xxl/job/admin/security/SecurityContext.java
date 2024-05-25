@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class SecurityContext implements InitializingBean  {
-    public static final String STORE_PATH="../xxl-job";
+    public static final String STORE_PATH="../xxl-job-meta";
     private static SecurityContext instance;
 
     private PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
