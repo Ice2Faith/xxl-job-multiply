@@ -60,20 +60,56 @@ xxl.job.database.platform.type=mysql
     - oracle
     - postgre
     - gbase
-    - h2(developing)
-    - sqlite3(developing)
+    - h2
 - support auto run init sql
-    - finish(wait publish release)
+    - finish
+- secure protect
+  - password payload transfer encrypt by sm2
+  - cookie token encrypt by sm2
+  - sm2 support by com.antherd/sm-crypto-0.3.0
+  - because of it support java and js environment
+- api invoke
+  - support use api invoke admin by http header name "token"
+  - got token value by /login response header "token"
+  - response such as: 
+  - token: expire1716627232689.073d3d163...
+  - it split by '.' as two part
+  - first part is expire1716627232689 mean this token will expire at 1716627232689 milliseconds timestamp
+  - second part is token body
+  - and then, request with this header to invoke api
+  - request token is "expire1716627232689.073d3d163..." or "073d3d163...", all right
+  - how to login ?
+    - like this: 
+    - static/js/login.1.js
+    - to search "submitHandler" or "generateKeyPairHex"
 
 - 支持的数据库库类型
   - mysql(官方)
   - oracle
   - postgre
   - gbase
-  - h2(开发中)
-  - sqlite3(开发中)
+  - h2
 - 支持自动运行初始化脚本
-    - 已完成(待发布)
+    - 已完成
+- 安全保护
+  - 密码的报文传输使用SM2加密
+  - Cookie的token使用SM2加密
+  - SM2 由com.antherd/sm-crypto-0.3.0提供
+  - 因为他支持java和js环境
+- api 调用
+  - 支持调用admin的接口，通过在http请求头中添加 "token"
+  - token 在 /login 接口响应头 "token" 中
+  - 响应头类似：
+  - token: expire1716627232689.073d3d163...
+  - 它被 '.' 分为两部分
+  - 第一部分是 expire1716627232689 表示这个 token 将会在 1716627232689 毫秒时间戳过期
+  - 第二部分是 token 体
+  - 接下来，请求时携带这个请求头调用
+  - 请求的 token 是 "expire1716627232689.073d3d163..." 或者 "073d3d163..." 都对
+  - 怎么登录呢？
+    - 像这样：
+    - static/js/login.1.js
+    - 搜索 "submitHandler" 或者 "generateKeyPairHex"
 
 ## Introduction
 XXL-JOB is a distributed task scheduling framework. 
