@@ -59,8 +59,9 @@ xxl.job.database.platform.type=mysql
     - mysql(official)
     - oracle
     - postgre
-    - gbase
+    - gbase(南大通用)
     - h2
+    - dm(dameng/达梦)
 - support auto run init sql
     - finish
 - secure protect
@@ -95,8 +96,9 @@ xxl.job.database.platform.type=mysql
   - mysql(官方)
   - oracle
   - postgre
-  - gbase
+  - gbase（南大通用）
   - h2
+  - dm（达梦数据库）
 - 支持自动运行初始化脚本
     - 已完成
 - 安全保护
