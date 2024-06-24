@@ -123,3 +123,44 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 ```shell
 1. XxlJobLogMapper.xml / findLogReport
 ```
+
+## 步骤 6
+- 运行 & 测试
+- 运行这个spring应用
+```shell
+com.xxl.job.admin.XxlJobAdminApplication
+```
+- 打开浏览器
+```shell
+http://localhost:8080/xxl-job-admin
+```
+- 登录
+```shell
+admin
+123456
+```
+- 添加一个用户, 例如 'test'
+- 修改这个用户 'test'
+- 登出
+- 登录 'test'
+- 浏览每个页面
+- 登出
+- 登录 'admin'
+- 添加一个执行器，任意地址，例如 http://localhost:8081/
+- 添加一个任务到这个执行器
+- 运行一次这个任务
+- 查看运行日志
+- 查看错误详情
+  - 因为不存在这个执行器
+  - 一定会运行错误
+- 查看运行报表
+- 如果每个页面都允许正常，适配就结束了
+- 否则, 查看控制台错误，并修复，直到没有错误为止
+- 错误日志不包括 rpc / http 调用错误
+
+## 步骤 7
+- 适配结束 & 适配问题
+- 你可以参考 oracle/postgre/h2/... 这些实现逻辑
+- 并调整你的实现逻辑
+- 注意保持原来的功能是可运行的
+- 不要影响原来的功能

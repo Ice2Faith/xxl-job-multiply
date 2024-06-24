@@ -123,3 +123,44 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 ```shell
 1. XxlJobLogMapper.xml / findLogReport
 ```
+
+## step 6
+- run & test
+- run this spring application 
+```shell
+com.xxl.job.admin.XxlJobAdminApplication
+```
+- open in browser
+```shell
+http://localhost:8080/xxl-job-admin
+```
+- login
+```shell
+admin
+123456
+```
+- add a user, such 'test'
+- modify this user 'test'
+- logout
+- login 'test'
+- view every page
+- logout
+- login 'admin'
+- add a executor, any address, such as http://localhost:8081/
+- add a job into this executor
+- run once of this job
+- view run log
+- view error detail message
+  - because of not exists this executor
+  - must cause run error
+- view report chart
+- if every page are running normal, adapt are finished
+- else, view console log and fixed it until no error log found
+- error log exclude invoke executor rpc error/ http error
+
+## step 7
+- adapt finish & adapt question
+- you can reference of oracle/postgre/h2/... those implement logic
+- and to adjust your adapt logic
+- pay attention to keep original features are runnable
+- don't effect original features
