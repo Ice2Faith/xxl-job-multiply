@@ -101,22 +101,12 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 9. XxlJobLogMapper.xml / findFailJobLogIds
 10. XxlJobUserMapper.xml / pageList
 ```
-- 特别地, 如果分页不使用 offset+limit 模式,你就需要修改下面的位置来适配
+- 特别地, 如果分页不使用 offset+limit 模式
+- 你就需要修改或者添加你的 ***IDatabasePageableConverter*** 到 spring context 中
+- 例如： ***OffsetLimitPageableConverter*** 或 ***OraclePageableConverter***
+- 并且使用这些分页参数（size/length）在你的 mapper-xml 文件中
 ```shell
-1. 全局在java文件中搜索关键字 'DatabasePlatformUtil.getPlatformConfig().type()'
-2. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobGroupController.java / pageList / DatabasePlatformUtil
-3. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobLogController.java / pageList / DatabasePlatformUtil
-4. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/UserController.java / pageList / DatabasePlatformUtil
-5. xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobScheduleHelper.java / start / DatabasePlatformUtil
-6. xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java / pageList / DatabasePlatformUtil
-```
-- 修改日期的加减为你的数据库类型
-- 例如, oracle 使用 +/- interval 语法, mysql 使用 date_add() 函数
-- 注意下面的位置
-```shell
-1. 在目录中搜索关键字 'DATE_ADD'
-2. XxlJobRegistryMapper.xml / findDead
-3. XxlJobRegistryMapper.xml / findAll
+1. 全局在java文件中搜索关键字 'DatabasePlatformUtil.convertPageable('
 ```
 - 修改列别名， 当 returnType 是 Map 类型的时候
 - 注意下面的位置

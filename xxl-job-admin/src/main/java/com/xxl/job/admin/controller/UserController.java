@@ -10,6 +10,7 @@ import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.admin.platform.DatabasePlatformType;
 import com.xxl.job.admin.platform.DatabasePlatformUtil;
+import com.xxl.job.admin.platform.pageable.DatabasePageable;
 import com.xxl.job.admin.security.SecurityContext;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -59,14 +60,8 @@ public class UserController {
                                         String username, int role) {
 
         // page list
-        List<XxlJobUser> list=new ArrayList<>();
-        if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE){
-            int endIndex=(start+1)*length;
-            list = xxlJobUserDao.pageList(start, endIndex, username, role);
-        }else{
-            list = xxlJobUserDao.pageList(start, length, username, role);
-        }
-
+        DatabasePageable pageable = DatabasePlatformUtil.convertPageable(start, length);
+        List<XxlJobUser> list= xxlJobUserDao.pageList(pageable.getStart(), pageable.getLength(), username, role);
         int list_count = xxlJobUserDao.pageListCount( username, role);
 
         // filter

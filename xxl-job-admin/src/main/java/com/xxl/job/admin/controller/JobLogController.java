@@ -12,6 +12,7 @@ import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.admin.platform.DatabasePlatformType;
 import com.xxl.job.admin.platform.DatabasePlatformUtil;
+import com.xxl.job.admin.platform.pageable.DatabasePageable;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.KillParam;
 import com.xxl.job.core.biz.model.LogParam;
@@ -107,13 +108,8 @@ public class JobLogController {
 		}
 
 		// page query
-		List<XxlJobLog> list=new ArrayList<>();
-		if(DatabasePlatformUtil.getPlatformConfig().type()== DatabasePlatformType.ORACLE) {
-			int endIndex = (start + 1) * length;
-			list = xxlJobLogDao.pageList(start, endIndex, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
-		}else{
-			list = xxlJobLogDao.pageList(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
-		}
+		DatabasePageable pageable = DatabasePlatformUtil.convertPageable(start, length);
+		List<XxlJobLog>  list = xxlJobLogDao.pageList(pageable.getStart(), pageable.getLength(), jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
 		int list_count = xxlJobLogDao.pageListCount( jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
 
 		// package result

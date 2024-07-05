@@ -101,22 +101,12 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 9. XxlJobLogMapper.xml / findFailJobLogIds
 10. XxlJobUserMapper.xml / pageList
 ```
-- specially, if page not use offset+limit mode,you need modify below locations
+- specially, if page not use offset+limit mode
+- you need modify or add your ***IDatabasePageableConverter*** into spring context
+- such as ***OffsetLimitPageableConverter*** or ***OraclePageableConverter***
+- and use those page parameters (size/length) in your mapper xml file
 ```shell
-1. global search in java source files of keyword 'DatabasePlatformUtil.getPlatformConfig().type()'
-2. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobGroupController.java / pageList / DatabasePlatformUtil
-3. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobLogController.java / pageList / DatabasePlatformUtil
-4. xxl-job-admin/src/main/java/com/xxl/job/admin/controller/UserController.java / pageList / DatabasePlatformUtil
-5. xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobScheduleHelper.java / start / DatabasePlatformUtil
-6. xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java / pageList / DatabasePlatformUtil
-```
-- modify date add/subtract implement to your database
-- such as, oracle use +/- interval grammar, mysql use date_add() function
-- attention below locations
-```shell
-1. search in directory of keyword 'DATE_ADD'
-2. XxlJobRegistryMapper.xml / findDead
-3. XxlJobRegistryMapper.xml / findAll
+1. global search in java source files of keyword 'DatabasePlatformUtil.convertPageable('
 ```
 - modify column alias while returnType is Map type
 - attention below locations
