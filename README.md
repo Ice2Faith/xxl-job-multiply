@@ -38,7 +38,7 @@ aim to adapt oracle/gbase xxl-job-admin.
 those change not effect xxl-job-core,.
 below config database platform to switch target platform
 ```shell
-# database platform, mysql|oracle|postgre
+# database platform, mysql|oracle|postgre|gbase|h2|dm|kingbase
 xxl.job.database.platform.type=mysql
 ```
 actually, mysql grammar adapted to gbase, or other, so that, other database could be use mysql platform.
