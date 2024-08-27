@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 权限拦截
@@ -25,7 +25,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		
+
 		if (!(handler instanceof HandlerMethod)) {
 			return true;	// proceed with the next interceptor
 		}
@@ -55,5 +55,5 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 		return true;	// proceed with the next interceptor
 	}
-	
+
 }

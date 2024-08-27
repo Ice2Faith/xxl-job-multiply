@@ -12,8 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/jobcode")
 public class JobCodeController {
-	
+
 	@Resource
 	private XxlJobInfoDao xxlJobInfoDao;
 	@Resource
@@ -52,7 +52,7 @@ public class JobCodeController {
 		model.addAttribute("jobLogGlues", jobLogGlues);
 		return "jobcode/jobcode.index";
 	}
-	
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ReturnT<String> save(Model model, int id, String glueSource, String glueRemark) {
@@ -67,7 +67,7 @@ public class JobCodeController {
 		if (exists_jobInfo == null) {
 			return new ReturnT<String>(500, I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
 		}
-		
+
 		// update new code
 		exists_jobInfo.setGlueSource(glueSource);
 		exists_jobInfo.setGlueRemark(glueRemark);
@@ -92,5 +92,5 @@ public class JobCodeController {
 
 		return ReturnT.SUCCESS;
 	}
-	
+
 }

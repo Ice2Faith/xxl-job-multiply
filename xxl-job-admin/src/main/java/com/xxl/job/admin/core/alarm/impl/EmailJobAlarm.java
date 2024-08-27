@@ -15,7 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
