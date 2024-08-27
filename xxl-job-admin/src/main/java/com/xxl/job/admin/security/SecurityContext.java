@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.script.ScriptException;
 import java.io.*;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -37,13 +38,17 @@ public class SecurityContext implements InitializingBean  {
     private volatile String currPublicKeySm3;
 
     {
-        currKeyPair = loadStoreKeypair(CURR_KEY_PATH, Sm2.generateKeyPairHex());
-        currPublicKeySm3= Sm3.sm3(currKeyPair.getPublicKey());
-        saveStoreKeypair(CURR_KEY_PATH,currKeyPair);
+        try {
+            currKeyPair = loadStoreKeypair(CURR_KEY_PATH, Sm2.generateKeyPairHex());
+            currPublicKeySm3= Sm3.sm3(currKeyPair.getPublicKey());
+            saveStoreKeypair(CURR_KEY_PATH,currKeyPair);
 
-        lastKeyPair = loadStoreKeypair(LAST_KEY_PATH, currKeyPair);
-        lastPublicKeySm3= Sm3.sm3(lastKeyPair.getPublicKey());
-        saveStoreKeypair(LAST_KEY_PATH,lastKeyPair);
+            lastKeyPair = loadStoreKeypair(LAST_KEY_PATH, currKeyPair);
+            lastPublicKeySm3= Sm3.sm3(lastKeyPair.getPublicKey());
+            saveStoreKeypair(LAST_KEY_PATH,lastKeyPair);
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -52,7 +57,11 @@ public class SecurityContext implements InitializingBean  {
         pool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                refreshKeypair();
+                try {
+                    refreshKeypair();
+                } catch (ScriptException e) {
+                    e.printStackTrace();
+                }
             }
         },0,30, TimeUnit.MINUTES);
     }
@@ -74,7 +83,7 @@ public class SecurityContext implements InitializingBean  {
         return passwordEncoder.matches(password,encoded);
     }
 
-    public synchronized Keypair refreshKeypair(){
+    public synchronized Keypair refreshKeypair() throws ScriptException {
         lastKeyPair = currKeyPair;
         lastPublicKeySm3=currPublicKeySm3;
         currKeyPair = Sm2.generateKeyPairHex();

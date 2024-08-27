@@ -62,5 +62,5 @@ public class WebExceptionResolver implements HandlerExceptionResolver {
 			return mv;
 		}
 	}
-	
+
 }
