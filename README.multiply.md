@@ -101,14 +101,33 @@ xxl.job.database.platform.type=mysql
         - 搜索 "submitHandler" 或者 "generateKeyPairHex"
 
 ## previews
+
 - login page
 - 登录页
+
 ![img_login.png](./doc/images/img_login.png)
+
+- index page
+- 首页
+
+![img_index.png](./doc/images/img_index.png)
 
 - encrypt transport
 - 加密传输
+
 ![img_crypto.png](./doc/images/img_crypto.png)
 
 - log page enhance
 - 日志页增强
+
 ![img_log_page.png](./doc/images/img_log_page.png)
+
+- executor page
+- 执行器页面
+
+![img_registry.png](./doc/images/img_registry.png)
+
+- task page
+- 任务页面
+
+![img_task.png](./doc/images/img_task.png)
