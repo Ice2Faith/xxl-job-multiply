@@ -134,9 +134,7 @@
         <dependency>
             <groupId>com.antherd</groupId>
             <artifactId>sm-crypto</artifactId>
-            <version>0.3.2</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/sm-crypto-0.3.2.jar</systemPath>
+            <version>0.3.2.1-RELEASE</version>
         </dependency>
 
         <dependency>
@@ -210,7 +208,7 @@
                         </manifest>
                         <manifestEntries>
                             <!-- 添加自己的classpath，多个classpath之间直接空格隔开，写成多个Class-Path标签将被后面的覆盖 -->
-                            <Class-Path>. ./resources/ lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar lib/sm-crypto-0.3.2.jar</Class-Path>
+                            <Class-Path>. ./resources/ lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar</Class-Path>
                             <Timestamp>${maven.build.timestamp}</Timestamp>
                         </manifestEntries>
                     </archive>
