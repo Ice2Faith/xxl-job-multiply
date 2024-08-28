@@ -7,7 +7,7 @@ aim to adapt oracle/gbase xxl-job-admin.
 those change not effect xxl-job-core,.
 below config database platform to switch target platform
 ```shell
-# database platform, mysql|oracle|postgre|gbase|h2|dm|kingbase
+# database platform, mysql|oracle|postgre|gbase|h2|dm|kingbase|sqlserver
 xxl.job.database.platform.type=mysql
 ```
 actually, mysql grammar adapted to gbase, or other, so that, other database could be use mysql platform.
@@ -18,7 +18,7 @@ actually, mysql grammar adapted to gbase, or other, so that, other database coul
 这些改变不影响 xxl-job-core
 下面的配置数据库平台为目标平台
 ```shell
-# database platform, mysql|oracle|postgre|gbase|h2|dm|kingbase
+# database platform, mysql|oracle|postgre|gbase|h2|dm|kingbase|sqlserver
 xxl.job.database.platform.type=mysql
 ```
 实际上，mysql 的语法适用于 gbase ，或者其他兼容的数据库，所以其他数据库也可以使用 mysql 平台
@@ -32,6 +32,7 @@ xxl.job.database.platform.type=mysql
     - h2
     - dm(dameng/达梦)
     - kingbase(人大金仓)
+    - sqlserver(>=2012)
 - support auto run init sql
     - finish
 - secure protect
@@ -70,6 +71,7 @@ xxl.job.database.platform.type=mysql
     - h2
     - dm（达梦数据库）
     - kingbase（人大金仓）
+    - sqlserver(>=2012)
 - 支持自动运行初始化脚本
     - 已完成
 - 安全保护
