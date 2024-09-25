@@ -3,13 +3,6 @@ MAINTAINER xuxueli
 
 ENV PARAMS=""
 
-ENV TZ=PRC
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-ADD target/xxl-job-admin-all.tar.gz /
-
-WORKDIR /xxl-job-admin
-
 ENV SERVER_PORT=8080
 
 ENV ACCESS_TOKEN=default_token
@@ -33,6 +26,13 @@ ENV MAIL_PORT=25
 ENV MAIL_USERNAME=xxx@qq.com
 ENV MAIL_FROM=$MAIL_USERNAME
 ENV MAIL_PASSWORD=xxx
+
+ENV TZ=PRC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ADD target/xxl-job-admin-all.tar.gz /
+
+WORKDIR /xxl-job-admin
 
 EXPOSE $SERVER_PORT
 
