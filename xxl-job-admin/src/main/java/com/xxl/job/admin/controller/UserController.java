@@ -8,15 +8,12 @@ import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobUserDao;
-import com.xxl.job.admin.platform.DatabasePlatformType;
-import com.xxl.job.admin.platform.DatabasePlatformUtil;
-import com.xxl.job.admin.platform.pageable.DatabasePageable;
+import com.xxl.job.admin.platform.pageable.data.PageDto;
 import com.xxl.job.admin.security.SecurityContext;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +23,6 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 
 import javax.script.ScriptException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,8 +58,8 @@ public class UserController {
                                         String username, int role) {
 
         // page list
-        DatabasePageable pageable = DatabasePlatformUtil.convertPageable(start, length);
-        List<XxlJobUser> list= xxlJobUserDao.pageList(pageable.getStart(), pageable.getLength(), username, role);
+        PageDto page=PageDto.of(start/length+1,length);
+        List<XxlJobUser> list= xxlJobUserDao.pageList(page, username, role);
         int list_count = xxlJobUserDao.pageListCount( username, role);
 
         // filter
