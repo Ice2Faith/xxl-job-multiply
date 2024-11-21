@@ -6,6 +6,9 @@ logs
 *.iml
 target/
 .DS_Store
+.gitattributes
+logs
+*.log
 *.bak
 *.tmp
 ~.*
