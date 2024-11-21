@@ -66,6 +66,10 @@
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>.</outputDirectory>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+                <exclude>*-sources.jar</exclude>
+            </excludes>
             <includes>
                 <include>*.jar</include>
             </includes>
