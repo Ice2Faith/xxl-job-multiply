@@ -1,5 +1,16 @@
 # multiply platform database supports
 
+## notice
+- for better sync official feature/fix
+- this repository maybe stop maintains
+- please use ***multiply/master*** branch on https://github.com/Ice2Faith/xxl-job instead this repository branch
+- or mirror repository https://gitee.com/ice2faith/xxl-job
+
+- 为了更好地同步官方功能/修复
+- 该仓库可能停止维护
+- 请在 https://github.com/Ice2Faith/xxl-job 上使用 ***multiply/master*** 分支来代替这个仓库分支
+- 或镜像仓库 https://gitee.com/ice2faith/xxl-job
+
 ## project
 this project is a branch from https://github.com/xuxueli/xxl-job .
 and version is 2.4.1.
