@@ -18,6 +18,7 @@ TAIL_LOG_LINES=1000
 TAIL_EXCEPT_LINES=3000
 
 # 查询异常之后的多少行
+TAIL_EXCEPT_BEFORE_LINES=5
 TAIL_EXCEPT_AFTER_LINES=30
 
 # ##################################################################################################################
@@ -125,6 +126,14 @@ ENABLE_JMX_CFG=$BOOL_FALSE
 JMX_PORT=9440
 # 如果出现visualvm连接不上，则这里设置为主机的IP地址
 JMX_HOST=
+
+
+# 是否开启xrebel分析代理
+ENABLE_XREBEL=$BOOL_FALSE
+# xrebel的agent的jar名称，这里是固定的，不用更改
+XREBEL_AGENT_JAR=xrebel.jar
+# 需要为完整路径，因为agent的依赖包需要通过完整路径的方式才能找到
+XREBEL_AGEN_PATH=/home/xrebel/agent
 
 # 是否开启Skywalking链路追踪
 ENABLE_SKYWALKING=$BOOL_FALSE
@@ -306,15 +315,15 @@ function verifyPidIsRunning() {
 function help()
 {
     echo -e "\033[0;31m please input 1st arg:Option \033[0m"
-    echo -e "    options: \033[0;34m {start|stop|restart|status|log|except|backup|rollback} \033[0m"
-    echo -e "\033[0;34m start    \033[0m : to run a jar which called JarName"
-    echo -e "\033[0;34m stop     \033[0m : to stop a jar which called JarName"
-    echo -e "\033[0;34m restart  \033[0m : to stop and run a jar which called JarName"
-    echo -e "\033[0;34m status   \033[0m : to check run status for a jar which called JarName"
-    echo -e "\033[0;34m log      \033[0m : to lookup the log for a jar which called JarName"
-    echo -e "\033[0;34m except   \033[0m : to lookup the exception log for a jar which called JarName"
-    echo -e "\033[0;34m backup   \033[0m : to backup to jar to backup dir for a jar which called JarName"
-    echo -e "\033[0;34m rollback \033[0m : to rollback from backup dir and backup to rollback dir for a jar which called JarName"
+    echo -e "    options: \033[0;34m {start|u|stop|d|restart|r|status|t|log|l|except|e|backup|b|rollback|o} \033[0m"
+    echo -e "\033[0;34m start/u    \033[0m : to run(up/u) a jar which called JarName"
+    echo -e "\033[0;34m stop/d     \033[0m : to stop(down/d) a jar which called JarName"
+    echo -e "\033[0;34m restart/r  \033[0m : to stop and run(restart/r) a jar which called JarName"
+    echo -e "\033[0;34m status/t   \033[0m : to check run status(status/t) for a jar which called JarName"
+    echo -e "\033[0;34m log/l      \033[0m : to lookup the log(log/l) for a jar which called JarName"
+    echo -e "\033[0;34m except/e   \033[0m : to lookup the exception(exception/e) log for a jar which called JarName"
+    echo -e "\033[0;34m backup/b   \033[0m : to backup(backup/b) to jar to backup dir for a jar which called JarName"
+    echo -e "\033[0;34m rollback/o \033[0m : to rollback(rollback/o) from backup dir and backup to rollback dir for a jar which called JarName"
 
     exit 1
 }
@@ -427,6 +436,26 @@ function prepareJmxCfg(){
     JVM_OPTS="${JVM_OPTS} -Djava.rmi.server.hostname=${JMX_HOST}"
   fi
 }
+
+# 准备xrebel的启动参数
+# -javaagent:/home/xrebel/agent/xrebel.jar
+function prepareXrebelCfg(){
+  if [ ! -d "${XREBEL_AGENT_PATH}" ];then
+    echo xrebel config fail, cause by xrebel agent path ${XREBEL_AGENT_PATH} not exists.
+    return
+  fi
+
+  _p_xrebel_agent_jar_full_path=$XREBEL_AGENT_PATH/$XREBEL_AGENT_JAR
+  if [ ! -f "${_p_xrebel_agent_jar_full_path}" ];then
+    echo xrebel config fail, cause by xrebel agent jar ${_p_xrebel_agent_jar_full_path} not exists.
+    return
+  fi
+
+  _p_xrebel_args="-javaagent:${_p_xrebel_agent_jar_full_path}"
+
+  JVM_OPTS="${JVM_OPTS} ${_p_xrebel_args}"
+}
+
 # 准备skywalking的启动参数
 # -javaagent:/home/skywalking/agent/skywalking-agent.jar=agent.service_name=appname,collector.backend_service=127.0.0.1:11800
 function prepareSkywalkingCfg(){
@@ -478,6 +507,10 @@ function prepareJvmOpts() {
 
     if [ $ENABLE_SKYWALKING == $BOOL_TRUE ];then
        prepareSkywalkingCfg
+    fi
+
+    if [ $ENABLE_XREBEL == $BOOL_TRUE ];then
+      prepareXrebelCfg
     fi
 }
 
@@ -617,7 +650,7 @@ function except() {
 
     if [[ -n "$_p_log_file" ]]; then
         echo -e "\033[0;34m found log file ${LOG_DIR}/$_p_log_file \033[0m"
-        tail -f -n $TAIL_EXCEPT_LINES ${LOG_DIR}/$_p_log_file | grep -inA $TAIL_EXCEPT_AFTER_LINES exception
+        tail -f -n $TAIL_EXCEPT_LINES ${LOG_DIR}/$_p_log_file | grep -in -B $TAIL_EXCEPT_BEFORE_LINES -A $TAIL_EXCEPT_AFTER_LINES exception
     else
       echo -e "\033[0;31m not found log file like ${AppName}*.log. \033[0m"
     fi
@@ -758,19 +791,35 @@ function mainApp(){
   case $Option in
     start)
     start;;
+    u)
+    start;;
     stop)
+    stop;;
+    d)
     stop;;
     restart)
     restart;;
+    r)
+    restart;;
     status)
+    status;;
+    t)
     status;;
     log)
     log;;
+    l)
+    log;;
     except)
+    except;;
+    e)
     except;;
     backup)
     backup;;
+    b)
+    backup;;
     rollback)
+    rollback;;
+    o)
     rollback;;
     *)
     help;;
