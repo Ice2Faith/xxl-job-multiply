@@ -53,7 +53,9 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 			if (needAdminuser && loginUser.getRole()!=1) {
 				throw new RuntimeException(I18nUtil.getString("system_permission_limit"));
 			}
-			request.setAttribute(LoginService.LOGIN_IDENTITY_KEY, loginUser);	// set loginUser, with request
+
+			// set loginUser, with request
+			setLoginUser(request, loginUser);
 		}
 
 		return true;	// proceed with the next interceptor
@@ -61,13 +63,25 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if(modelAndView!=null){
-            XxlJobUser loginUser = loginService.ifLogin(request, response);
-            modelAndView.getModel().putIfAbsent("loginUser", loginUser);
-        }
+		if(request.getAttribute(LoginService.LOGIN_USER_KEY)==null) {
+			if (modelAndView != null) {
+				XxlJobUser loginUser = loginService.ifLogin(request, response);
+				modelAndView.getModel().putIfAbsent(LoginService.LOGIN_USER_KEY, loginUser);
+			}
+		}
     }
 
 	// -------------------- permission tool --------------------
+
+	/**
+	 * set loginUser
+	 *
+	 * @param request
+	 * @param loginUser
+	 */
+	private static void setLoginUser(HttpServletRequest request, XxlJobUser loginUser){
+		request.setAttribute(LoginService.LOGIN_USER_KEY, loginUser);
+	}
 
 	/**
 	 * get loginUser
@@ -76,7 +90,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 	 * @return
 	 */
 	public static XxlJobUser getLoginUser(HttpServletRequest request){
-		XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);	// get loginUser, with request
+		XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_USER_KEY);	// get loginUser, with request
 		return loginUser;
 	}
 
@@ -97,21 +111,21 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 	 * filter XxlJobGroup by role
 	 *
 	 * @param request
-	 * @param jobGroupList_all
+	 * @param jobGroupAllList
 	 * @return
 	 */
-	public static List<XxlJobGroup> filterJobGroupByRole(HttpServletRequest request, List<XxlJobGroup> jobGroupList_all){
+	public static List<XxlJobGroup> filterJobGroupByRole(HttpServletRequest request, List<XxlJobGroup> jobGroupAllList){
 		List<XxlJobGroup> jobGroupList = new ArrayList<>();
-		if (jobGroupList_all!=null && jobGroupList_all.size()>0) {
+		if (jobGroupAllList!=null && !jobGroupAllList.isEmpty()) {
 			XxlJobUser loginUser = PermissionInterceptor.getLoginUser(request);
 			if (loginUser.getRole() == 1) {
-				jobGroupList = jobGroupList_all;
+				jobGroupList = jobGroupAllList;
 			} else {
 				List<String> groupIdStrs = new ArrayList<>();
-				if (loginUser.getPermission()!=null && loginUser.getPermission().trim().length()>0) {
+				if (loginUser.getPermission()!=null && !loginUser.getPermission().trim().isEmpty()) {
 					groupIdStrs = Arrays.asList(loginUser.getPermission().trim().split(","));
 				}
-				for (XxlJobGroup groupItem:jobGroupList_all) {
+				for (XxlJobGroup groupItem:jobGroupAllList) {
 					if (groupIdStrs.contains(String.valueOf(groupItem.getId()))) {
 						jobGroupList.add(groupItem);
 					}
