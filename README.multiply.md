@@ -109,6 +109,13 @@ xxl.job.database.platform.type=mysql
         - like this:
         - static/js/login.1.js
         - to search "submitHandler" or "generateKeyPairHex"
+- dynamic plugin support
+    - now, we support load external extend jar from "plugins" directory when use "*.tar.gz" package deploy
+    - such as, official not include mariadb jdbc driver
+    - now, you can add mariadb jdbc driver (*.jar) file into plugins directory
+    - and modify "application.properties" file to apply mariadb datasource driver
+    - and, you also cloud add your dialect mybatis mapper (*.xml) files to resources directory
+    - so, you can change only the archive instead of modify source code and repackage
 
 - 支持的数据库库类型
     - mysql(官方)
@@ -148,6 +155,13 @@ xxl.job.database.platform.type=mysql
         - 像这样：
         - static/js/login.1.js
         - 搜索 "submitHandler" 或者 "generateKeyPairHex"
+- 动态插件支持
+    - 现在，当使用"*.tar.gz"包部署时，我们支持从"plugins"目录加载外部扩展jar
+    - 如，官方不包括 mariadb 的JDBC驱动程序
+    - 现在，您可以添加 mariadb 的JDBC驱动程序（*.jar）文件到 plugins 目录
+    - 并修改"application.properties"文件应用 mariadb 的数据源驱动程序
+    - 并且，您还可以将数据库方言 mybatis mapper (*.xml)文件添加到 resources 目录中
+    - 所以，你可以只改变打包产物，而不是修改源代码并重新打包
 
 ## usage
 - 1. download the package
