@@ -10,8 +10,8 @@
         <a href="https://github.com/xuxueli/xxl-job/actions">
             <img src="https://github.com/xuxueli/xxl-job/workflows/Java%20CI/badge.svg" >
         </a>
-        <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job-core/">
-            <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job-core/badge.svg" >
+        <a href="https://central.sonatype.com/artifact/com.xuxueli/xxl-job-core">
+            <img src="https://img.shields.io/maven-central/v/com.xuxueli/xxl-job-core" >
         </a>
         <a href="https://github.com/xuxueli/xxl-job/releases">
          <img src="https://img.shields.io/github/release/xuxueli/xxl-job.svg" >
@@ -50,6 +50,10 @@ Now, it's already open source, and many companies use it in production environme
 
 XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。现已开放源代码并接入多家公司线上产品线，开箱即用。
 
+## fork introduce
+- please view README.multiply.md
+
+[README.multiply.md](README.multiply.md)
 
 ## Sponsor
 XXL-JOB is an open source and free project, with its ongoing development made possible entirely by the support of these awesome backers.
@@ -854,6 +858,8 @@ XXL-JOB 是一个开源且免费项目，其正在进行的开发完全得益于
     - 689、广东西欧克实业有限公司
     - 690、唱吧麦颂KTV
     - 691、联通云
+    - 692、北京爱话本科技有限公司
+    - 693、北京起创科技有限公司
     - ……
 
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-job/issues/1 ) 登记，登记仅仅为了产品推广。

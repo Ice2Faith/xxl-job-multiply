@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.xuxueli</groupId>
         <artifactId>xxl-job</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+		<version>3.1.2-SNAPSHOT</version>
     </parent>
     <artifactId>xxl-job-admin</artifactId>
     <packaging>jar</packaging>
@@ -202,7 +202,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <!-- 指定启动类 -->
-                            <mainClass>com.xxl.job.admin.XxlJobAdminApplication</mainClass>
+                            <mainClass>com.xxl.job.admin.ExtApplicationLauncher</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
@@ -210,6 +210,8 @@
                             <!-- 添加自己的classpath，多个classpath之间直接空格隔开，写成多个Class-Path标签将被后面的覆盖 -->
                             <Class-Path>. ./resources/ lib/gbase-connector-java-8.3.81.53-build55.2.1-bin.jar</Class-Path>
                             <Timestamp>${maven.build.timestamp}</Timestamp>
+                            <Ext-Main-Class>com.xxl.job.admin.XxlJobAdminApplication</Ext-Main-Class>
+                            <Ext-Path>plugins</Ext-Path>
                         </manifestEntries>
                     </archive>
                     <excludes>
