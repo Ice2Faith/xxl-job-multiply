@@ -1,6 +1,7 @@
 package com.xxl.job.admin.initial;
 
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.scheduler.conf.XxlJobAdminConfig;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -15,6 +16,9 @@ import org.springframework.util.StreamUtils;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -34,10 +38,11 @@ import java.util.List;
 public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBeanPostProcessor {
     private Logger log = LoggerFactory.getLogger(DatabaseScriptInitializerConfigurer.class);
 
+    private String platformType;
     private String testSql = "select 1 from xxl_job_info where 1!=1";
     private String encoding = "UTF-8";
     private String separator = ";";
-    private String scriptLocations ;
+    private String scriptLocations;
 
     @Autowired
     private DataSource dataSource;
@@ -107,7 +112,7 @@ public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBe
                 }
             }
 
-            if(paths.isEmpty()){
+            if (paths.isEmpty()) {
                 log.warn("jump init database, empty init script location config.");
                 return null;
             }
@@ -116,7 +121,7 @@ public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBe
 
             for (String path : paths) {
                 if (path != null && !"".equals(path)) {
-                    log.info("read script : "+path);
+                    log.info("read script : " + path);
                     try {
                         URL url = ResourceUtils.getURL(path);
                         if (url != null) {
@@ -124,17 +129,11 @@ public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBe
                             String text = StreamUtils.copyToString(is, Charset.forName(encoding));
                             is.close();
 
-                            String[] arr = text.split(separator);
-                            for (String item : arr) {
-                                String sql = item.trim();
-                                if (!"".equals(sql)) {
-                                    sqls.add(sql);
-                                }
-                            }
-                            log.info("loaded script : "+path);
+                            sqls.add(text);
+                            log.info("loaded script : " + path);
                         }
                     } catch (Exception e) {
-                        log.info("read script content error,continue it : "+e.getMessage(),e);
+                        log.info("read script content error,continue it : " + e.getMessage(), e);
                     }
                 }
             }
@@ -157,7 +156,7 @@ public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBe
                         stat.close();
                     } catch (Exception e) {
                         hasTable = false;
-                        log.debug("test table exists exception,ignore it : "+e.getMessage(),e);
+                        log.debug("test table exists exception,ignore it : " + e.getMessage(), e);
                     }
 
                     if (hasTable) {
@@ -169,13 +168,13 @@ public class DatabaseScriptInitializerConfigurer implements InstantiationAwareBe
                 try {
                     log.info("database init script running...");
                     for (String sql : sqls) {
-                        Statement stat = conn.createStatement();
-                        stat.executeUpdate(sql);
-                        stat.close();
+                        ScriptRunner runner = new ScriptRunner(conn);
+                        runner.setLogWriter(new PrintWriter(new StringWriter()));
+                        runner.runScript(new StringReader(sql));
                     }
                     log.info("database init script has run.");
                 } catch (Exception e) {
-                    log.error("database init script run error : "+e.getMessage(),e);
+                    log.error("database init script run error : " + e.getMessage(), e);
                 }
 
             } finally {
